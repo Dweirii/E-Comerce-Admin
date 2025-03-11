@@ -67,7 +67,7 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
         setUploadProgress((prev) => {
           if (prev >= 95) {
             clearInterval(interval)
-            return prev
+            return prev 
           }
           return prev + 5
         })
@@ -102,8 +102,8 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
       } else {
         await axios.post(`/api/${params.storeId}/billboards`, data)
       }
-
-      router.refresh()
+      router.refresh();
+      router.push(`/${params.storeId}/billboards`);
       toast.success(toastMessage)
       if (!initialData) {
         router.push(`/${params.storeId}/billboards`)
