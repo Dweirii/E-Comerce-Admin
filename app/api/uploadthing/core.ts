@@ -3,10 +3,8 @@ import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
-// Mock authentication function (replace with real auth logic)
 const auth = async (req: Request) => {
-  // Simulate user authentication (replace with actual auth logic)
-  return { id: "fakeId" }; // Return null if user is not authenticated
+  return { id: "fakeId" }; 
 };
 
 export const ourFileRouter: FileRouter = {
@@ -24,7 +22,7 @@ export const ourFileRouter: FileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       return {
         uploadedBy: metadata.userId,
-        fileUrl: file.ufsUrl, // Updated to use `file.ufsUrl` instead of deprecated `file.url`
+        fileUrl: file.ufsUrl, 
         fileName: file.name,
       };
     }),
