@@ -57,7 +57,7 @@ export const SizesForm: React.FC<SizesFormProps> = ({ initialData }) => {
       setLoading(true)
 
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/sizes/${params.billboardId}`, data)
+        await axios.patch(`/api/${params.storeId}/sizes/${params.sizeId}`, data)
       } else {
         await axios.post(`/api/${params.storeId}/sizes`, data)
       }
@@ -167,10 +167,6 @@ export const SizesForm: React.FC<SizesFormProps> = ({ initialData }) => {
           </div>
         </form>
       </Form>
-
-      <Separator className="my-4" />
-
-      <ApiAlert title="NEXT_PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="Public" />
     </>
   )
 }

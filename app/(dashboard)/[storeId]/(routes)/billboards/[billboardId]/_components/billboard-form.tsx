@@ -316,10 +316,6 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
           </div>
         </form>
       </Form>
-
-      <Separator className="my-4" />
-
-      <ApiAlert title="NEXT_PUBLIC_API_URL" description={`${origin}/api/${params.storeId}`} variant="Public" />
     </>
   )
 }
