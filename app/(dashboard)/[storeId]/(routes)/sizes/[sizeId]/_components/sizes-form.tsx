@@ -5,12 +5,12 @@ import type React from "react"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
-import type { Billboard, Category } from "@prisma/client"
+import type { Size } from "@prisma/client"
 import * as z from "zod"
-import { Trash,  ArrowLeft } from "lucide-react"
+import { Trash, ImageIcon, X, ArrowLeft } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import toast from "react-hot-toast"
@@ -19,57 +19,53 @@ import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
 import { ApiAlert } from "@/components/ui/api-alert"
 import { useOrigin } from "@/hooks/use-origin"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-interface CategoryFormProps {
-  initialData: Category | null;
-  billboards:Billboard[];
+interface SizesFormProps {
+  initialData: Size | null
 }
 
 const formSchema = z.object({
-  name: z.string().min(1, "Label is required"),
-  billboardId: z.string().min(1, "Image is required"),
+  name: z.string().min(1, "Name is required"),
+  value: z.string().min(1, "Value is required"),
 })
 
-type CategoryFormValues = z.infer<typeof formSchema>
+type SizesFormValues = z.infer<typeof formSchema>
 
-export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billboards}) => {
+export const SizesForm: React.FC<SizesFormProps> = ({ initialData }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-
-  const [isMobile, setIsMobile] = useState(false)
 
   const params = useParams()
   const router = useRouter()
   const origin = useOrigin()
 
-
-  const title = initialData ? "Edit Category" : "Create Category"
-  const description = initialData ? "Edit a Category" : "Add a new Category"
-  const toastMessage = initialData ? "Category updated" : "Category created"
+  const title = initialData ? "Edit size" : "Create size"
+  const description = initialData ? "Edit a size" : "Add a new size"
+  const toastMessage = initialData ? "size updated" : "size created"
   const action = initialData ? "Save changes" : "Create"
 
-  const form = useForm<CategoryFormValues>({
+  const form = useForm<SizesFormValues>({
     resolver: zodResolver(formSchema),
+
     defaultValues: initialData
-      ? { name: initialData.name, billboardId: initialData.billboardId }
-      : { name: "", billboardId: "" },
+      ? { name: initialData.name, value: initialData.value }
+      : { name: "", value: "" },
   })
 
-  const onSubmit = async (data: CategoryFormValues) => {
+  const onSubmit = async (data: SizesFormValues) => {
     try {
       setLoading(true)
 
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
+        await axios.patch(`/api/${params.storeId}/sizes/${params.billboardId}`, data)
       } else {
-        await axios.post(`/api/${params.storeId}/categories`, data)
+        await axios.post(`/api/${params.storeId}/sizes`, data)
       }
       router.refresh();
-      router.push(`/${params.storeId}/categories`);
+      router.push(`/${params.storeId}/sizes`);
       toast.success(toastMessage)
       if (!initialData) {
-        router.push(`/${params.storeId}/categories`)
+        router.push(`/${params.storeId}/sizes`)
       }
     } catch {
       toast.error("Something went wrong")
@@ -81,18 +77,17 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
   const onDelete = async () => {
     try {
       setLoading(true)
-      await axios.delete(`/api/${params.storeId}/categories/${params.categoryId}`)
+      await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`)
       router.refresh()
-      router.push(`/${params.storeId}/categories`)
-      toast.success("Category deleted.")
+      router.push(`/${params.storeId}/sizes`)
+      toast.success("Size deleted.")
     } catch (error) {
-      toast.error("Make sure you removed all products using this category first.")
+      toast.error("Make sure you removed all products using this size first.")
     } finally {
       setLoading(false)
       setOpen(false)
     }
   }
-
 
   return (
     <>
@@ -104,7 +99,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
             variant="ghost"
             size="icon"
             className="mr-2 md:hidden"
-            onClick={() => router.push(`/${params.storeId}/categories`)}
+            onClick={() => router.push(`/${params.storeId}/sizes`)}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -114,7 +109,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
           <Button
             disabled={loading}
             variant="destructive"
-            size={isMobile ? "default" : "sm"}
             onClick={() => setOpen(true)}
             className="self-start sm:self-auto"
           >
@@ -134,9 +128,9 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Name</FormLabel>
+                  <FormLabel className="text-base">Label</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category Name" {...field} className="h-12 text-base" />
+                    <Input disabled={loading} placeholder="Size Label" {...field} className="h-12 text-base" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,35 +138,13 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
             />
             <FormField
               control={form.control}
-              name="billboardId"
+              name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-base">Billboard</FormLabel>
-                    <Select 
-                      disabled={loading} 
-                      onValueChange={field.onChange} 
-                      value={field.value} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue
-                            defaultValue={field.value}
-                            placeholder="Select a billboard"
-                          />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {billboards.map((billboard) => (
-                          <SelectItem 
-                            key={billboard.id}
-                            value={billboard.id}
-                          >
-                            {billboard.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  <FormLabel className="text-base">Value</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="The Value" {...field} className="h-12 text-base" />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -184,13 +156,13 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
               type="button"
               variant="outline"
               disabled={loading}
-              onClick={() => router.push(`/${params.storeId}/billboards`)}
+              onClick={() => router.push(`/${params.storeId}/sizes`)}
               className="flex-1 md:flex-none"
             >
               Cancel
             </Button>
             <Button disabled={loading} type="submit" className="flex-1 md:flex-none">
-              {loading ? "Loading..." : action}
+                  {loading ? "Loading..." : action}
             </Button>
           </div>
         </form>

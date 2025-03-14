@@ -12,11 +12,13 @@ model Store {
   id          String    @id @default(uuid())
   name        String
   userId      String
-  billboards  Billboard[] @relation("StoreToBillboard")
+
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
+  sizes       Size[] @relation("StoreToSize")
   Category    Category[] @relation("StoreToCategory")
+  billboards  Billboard[] @relation("StoreToBillboard")
 }
 
 model Billboard {
@@ -44,4 +46,16 @@ model Category {
 
   @@index([storeId])
   @@index([billboardId])
+}
+
+model Size {
+  id          String   @id @default(uuid())
+  storeId     String
+  store       Store  @relation("StoreToSize",fields: [storeId], references: [id])
+  name        String
+  value       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+   
+  @@index([storeId])
 }
