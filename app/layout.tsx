@@ -3,10 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "@/providers/modal-provider";
-
 import { ToasterProvider } from "@/providers/toast-provider";
-
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,21 +20,24 @@ export const metadata: Metadata = {
   description: "An admin dashboard for E-Stores",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
+  params,
+}: {
   children: React.ReactNode;
-}>) {
+  params: Promise<{ storeId: string }>; 
+}) {
+  const resolvedParams = await params; 
+  const { storeId } = resolvedParams;
+
   return (
     <ClerkProvider>
       <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ModalProvider/>
-
-          <ToasterProvider/>
-
+          <ModalProvider />
+          <ToasterProvider />
           {children}
         </body>
       </html>
