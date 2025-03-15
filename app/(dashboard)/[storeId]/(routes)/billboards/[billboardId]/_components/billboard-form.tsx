@@ -17,8 +17,6 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
-import { ApiAlert } from "@/components/ui/api-alert"
-import { useOrigin } from "@/hooks/use-origin"
 import { UploadButton } from "@/utils/uploadthing"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -44,7 +42,6 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
 
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
 
   // Check if viewport is mobile
   useEffect(() => {
@@ -122,7 +119,7 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
       router.refresh()
       router.push(`/${params.storeId}/billboards`)
       toast.success("Billboard deleted.")
-    } catch (error) {
+    } catch {
       toast.error("Make sure you removed all categories using this billboard first.")
     } finally {
       setLoading(false)

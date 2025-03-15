@@ -6,28 +6,25 @@ import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import * as z from "zod"
-import { Trash, ImageIcon, X, ArrowLeft, DollarSign, Tag } from "lucide-react"
+import { Trash,  X, ArrowLeft, DollarSign, Tag } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
-import { useOrigin } from "@/hooks/use-origin"
 import { UploadButton } from "@/utils/uploadthing"
 import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useMobile } from "@/hooks/use-mobile"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// Define form schema for validation
+
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
   image: z.array(z.object({ url: z.string() })).min(1, "At least one image is required"),
@@ -61,7 +58,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
   // Hooks
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
   const isMobile = useMobile()
 
 
@@ -121,7 +117,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
       router.refresh()
       router.push(`/${params.storeId}/products`)
       toast.success("Product deleted successfully")
-    } catch (error) {
+    } catch {
       toast.error("Make sure you removed all items using this product first")
     } finally {
       setLoading(false)

@@ -7,7 +7,7 @@ import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import type { Size } from "@prisma/client"
 import * as z from "zod"
-import { Trash, ImageIcon, X, ArrowLeft } from "lucide-react"
+import { Trash, ArrowLeft } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
@@ -17,8 +17,7 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
-import { ApiAlert } from "@/components/ui/api-alert"
-import { useOrigin } from "@/hooks/use-origin"
+
 
 interface SizesFormProps {
   initialData: Size | null
@@ -37,7 +36,6 @@ export const SizesForm: React.FC<SizesFormProps> = ({ initialData }) => {
 
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
 
   const title = initialData ? "Edit size" : "Create size"
   const description = initialData ? "Edit a size" : "Add a new size"
@@ -81,7 +79,7 @@ export const SizesForm: React.FC<SizesFormProps> = ({ initialData }) => {
       router.refresh()
       router.push(`/${params.storeId}/sizes`)
       toast.success("Size deleted.")
-    } catch (error) {
+    } catch {
       toast.error("Make sure you removed all products using this size first.")
     } finally {
       setLoading(false)

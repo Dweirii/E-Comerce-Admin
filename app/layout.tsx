@@ -22,13 +22,13 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  params,
+
 }: {
   children: React.ReactNode;
   params: Promise<{ storeId: string }>; 
 }) {
-  const resolvedParams = await params; 
-  const { storeId } = resolvedParams;
+
+
 
   return (
     <ClerkProvider>

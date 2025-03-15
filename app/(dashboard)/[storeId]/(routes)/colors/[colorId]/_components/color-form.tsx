@@ -7,7 +7,7 @@ import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import type { Color } from "@prisma/client"
 import * as z from "zod"
-import { Trash, ImageIcon, X, ArrowLeft } from "lucide-react"
+import { Trash, ArrowLeft } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
@@ -17,8 +17,6 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
-import { ApiAlert } from "@/components/ui/api-alert"
-import { useOrigin } from "@/hooks/use-origin"
 
 interface ColorsFormProps {
   initialData: Color | null
@@ -39,7 +37,6 @@ export const ColorsForm: React.FC<ColorsFormProps> = ({ initialData }) => {
 
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
 
   const title = initialData ? "Edit color" : "Create color"
   const description = initialData ? "Edit a color" : "Add a new color"
@@ -83,7 +80,7 @@ export const ColorsForm: React.FC<ColorsFormProps> = ({ initialData }) => {
       router.refresh()
       router.push(`/${params.storeId}/colors`)
       toast.success("Colors deleted.")
-    } catch (error) {
+    } catch {
       toast.error("Make sure you removed all products using this color first.")
     } finally {
       setLoading(false)

@@ -17,8 +17,6 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AleartModal } from "@/components/modals/alert-modal"
-import { ApiAlert } from "@/components/ui/api-alert"
-import { useOrigin } from "@/hooks/use-origin"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface CategoryFormProps {
@@ -37,11 +35,11 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const [isMobile, setIsMobile] = useState(false)
+
 
   const params = useParams()
   const router = useRouter()
-  const origin = useOrigin()
+
 
 
   const title = initialData ? "Edit Category" : "Create Category"
@@ -85,7 +83,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
       router.refresh()
       router.push(`/${params.storeId}/categories`)
       toast.success("Category deleted.")
-    } catch (error) {
+    } catch  {
       toast.error("Make sure you removed all products using this category first.")
     } finally {
       setLoading(false)
@@ -114,7 +112,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData , billbo
           <Button
             disabled={loading}
             variant="destructive"
-            size={isMobile ? "default" : "sm"}
             onClick={() => setOpen(true)}
             className="self-start sm:self-auto"
           >
