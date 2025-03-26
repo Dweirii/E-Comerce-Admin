@@ -16,7 +16,7 @@ export async function GET (
 
         const billboard = await prismadb.billboard.findUnique({
             where: {
-                id: params.billboardId,
+                id: await params.billboardId,
             }
         });
 
@@ -59,7 +59,7 @@ export async function PATCH (
 
         const storeByUserId = await prismadb.store.findFirst({
             where: {
-                id: params.storeId,
+                id: await params.storeId,
                 userId
             }
         });
@@ -70,7 +70,7 @@ export async function PATCH (
 
         const billboard = await prismadb.billboard.updateMany({
             where: {
-                id: params.billboardId,
+                id: await params.billboardId,
             },
             data: {
                 label,
@@ -116,7 +116,7 @@ export async function DELETE (
 
         const billboard = await prismadb.billboard.deleteMany({
             where: {
-                id: params.billboardId,
+                id: await params.billboardId,
 
             }
         });

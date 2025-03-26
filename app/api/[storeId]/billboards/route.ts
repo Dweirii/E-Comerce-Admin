@@ -30,7 +30,7 @@ export async function POST(
 
         const storeByUserId = await prismadb.store.findFirst({
             where: {
-                id: params.storeId,
+                id: await params.storeId,
                 userId
             }
         });
@@ -69,7 +69,7 @@ export async function GET(
 
         const billboards = await prismadb.billboard.findMany({
             where: {
-                storeId: params.storeId,
+                storeId:await params.storeId,
             }
         });
 

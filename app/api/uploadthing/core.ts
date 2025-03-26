@@ -10,7 +10,7 @@ const auth = async (req: Request) => {
 export const ourFileRouter: FileRouter = {
   imageUploader: f({
     image: {
-      maxFileSize: "4MB",
+      maxFileSize: "64MB",
       maxFileCount: 1,
     },
   })
