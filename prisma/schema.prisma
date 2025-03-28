@@ -136,7 +136,8 @@ model Order {
   phone      String      @default("")
   address    String      @default("")
   price      Decimal
-
+  deliveryDetails String?
+  
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
@@ -152,9 +153,10 @@ model OrderItem {
   productId String
   price     Float
 
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade) // ← هنا الإضافة
   order     Order   @relation("OrderToOrderItem", fields: [orderId], references: [id])
 
   @@index([orderId])
   @@index([productId])
 }
+

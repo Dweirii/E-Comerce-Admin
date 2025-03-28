@@ -4,9 +4,7 @@ import { format } from "date-fns";
 import { ProductColumn } from "./_components/columns";
 import { formatter } from "@/lib/utils";
 
-const ProductsPage = async ({
-                                params,
-                            }: {
+const ProductsPage = async ({params}: {
     params: Promise<{ storeId: string }>;
 }) => {
     const { storeId } = await params; // Await params to access storeId
@@ -33,7 +31,7 @@ const ProductsPage = async ({
         price: formatter.format(item.price.toNumber()),
         category: item.category.name,
         size: item.size.name,
-        color: item.color.value,
+        color: item.color.name,
         createdAt: format(item.createdAt, "MMMM do, yyyy"),
     }));
 

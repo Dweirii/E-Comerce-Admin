@@ -1,20 +1,20 @@
-import prismadb from "@/lib/prismadb";
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import prismadb from "@/lib/prismadb";
 
 export async function GET(
     req: Request,
-    { params }: { params: { productId: string } }
+    context: { params: Promise<{ productId: string }> }
 ) {
     try {
-        if (!params.productId) {
+        const { productId } = await context.params;
+
+        if (!productId) {
             return new NextResponse("Product id is required", { status: 400 });
         }
 
         const product = await prismadb.product.findUnique({
-            where: {
-                id: params.productId,
-            },
+            where: { id: productId },
             include: {
                 image: true,
                 category: true,
@@ -29,16 +29,17 @@ export async function GET(
 
         return NextResponse.json(product);
     } catch (error) {
-        console.log("[Product_GET]", error);
+        console.error("[Product_GET]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
 
 export async function PATCH(
     req: Request,
-    { params }: { params: { storeId: string; productId: string } }
+    context: { params: Promise<{ storeId: string; productId: string }> }
 ) {
     try {
+        const { storeId, productId } = await context.params;
         const { userId } = await auth();
         const body = await req.json();
 
@@ -81,15 +82,12 @@ export async function PATCH(
             return new NextResponse("Color is required", { status: 400 });
         }
 
-        if (!params.productId) {
+        if (!productId) {
             return new NextResponse("Product id is required", { status: 400 });
         }
 
         const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: params.storeId,
-                userId,
-            },
+            where: { id: storeId, userId },
         });
 
         if (!storeByUserId) {
@@ -97,9 +95,7 @@ export async function PATCH(
         }
 
         await prismadb.product.update({
-            where: {
-                id: params.productId,
-            },
+            where: { id: productId },
             data: {
                 name,
                 price,
@@ -115,9 +111,7 @@ export async function PATCH(
         });
 
         const product = await prismadb.product.update({
-            where: {
-                id: params.productId,
-            },
+            where: { id: productId },
             data: {
                 image: {
                     createMany: {
@@ -129,16 +123,17 @@ export async function PATCH(
 
         return NextResponse.json(product);
     } catch (error) {
-        console.log("[Product_PATCH]", error);
+        console.error("[Product_PATCH]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { storeId: string; productId: string } }
+    context: { params: Promise<{ storeId: string; productId: string }> }
 ) {
     try {
+        const { storeId, productId } = await context.params;
         const { userId } = await auth();
 
         if (!userId) {
@@ -146,29 +141,24 @@ export async function DELETE(
         }
 
         const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: params.storeId,
-                userId,
-            },
+            where: { id: storeId, userId },
         });
 
         if (!storeByUserId) {
             return new NextResponse("Unauthorized", { status: 403 });
         }
 
-        if (!params.productId) {
+        if (!productId) {
             return new NextResponse("Product id is required", { status: 400 });
         }
 
         const product = await prismadb.product.delete({
-            where: {
-                id: params.productId,
-            },
+            where: { id: productId },
         });
 
         return NextResponse.json(product);
     } catch (error) {
-        console.log("[Product_DELETE]", error);
+        console.error("[Product_DELETE]", error);
         return new NextResponse("Internal Server Error", { status: 500 });
     }
 }

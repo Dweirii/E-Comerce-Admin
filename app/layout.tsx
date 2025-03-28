@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ToasterProvider } from "@/providers/toast-provider";
 
+// تحميل الخطوط وتعيين المتغيرات
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -15,26 +16,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// معلومات الصفحة العامة
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "An admin dashboard for E-Stores",
 };
 
-export default async function RootLayout({
+// Root Layout
+export default function RootLayout({
   children,
-
 }: {
   children: React.ReactNode;
-  params: Promise<{ storeId: string }>; 
 }) {
-
-
-
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="h-full w-full">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} min-h-screen w-full antialiased bg-background text-foreground flex flex-col`}
         >
           <ModalProvider />
           <ToasterProvider />

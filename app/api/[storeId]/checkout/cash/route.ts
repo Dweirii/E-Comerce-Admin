@@ -1,8 +1,6 @@
-import prismadb from "@/lib/prismadb";
-import { stripe } from "@/lib/stripe";
-import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { Stripe } from "stripe";
+import prismadb from "@/lib/prismadb";
+import { Prisma } from "@prisma/client";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -28,9 +26,9 @@ export async function POST(
       });
     }
 
-    const { productIds } = await req.json();
+    const { productsIds, deliveryDetails } = await req.json();
 
-    if (!productIds || productIds.length === 0) {
+    if (!productsIds || productsIds.length === 0) {
       return new NextResponse("Product IDs are required.", {
         status: 400,
         headers: corsHeaders,
@@ -40,34 +38,25 @@ export async function POST(
     const products = await prismadb.product.findMany({
       where: {
         id: {
-          in: productIds,
+          in: productsIds,
         },
       },
     });
 
+    // احسب السعر الكلي
     const totalPrice = products.reduce((sum, product) => {
       return sum + product.price.toNumber();
     }, 0);
 
-    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
-      products.map((product) => ({
-        quantity: 1,
-        price_data: {
-          currency: "USD",
-          product_data: {
-            name: product.name,
-          },
-          unit_amount: product.price.toNumber() * 100,
-        },
-      }));
-
+    // أنشئ الطلب
     const order = await prismadb.order.create({
       data: {
         storeId: storeId,
         isPaid: false,
         price: new Prisma.Decimal(totalPrice),
+        deliveryDetails: JSON.stringify(deliveryDetails),
         orderItems: {
-          create: productIds.map((productId: string) => {
+          create: productsIds.map((productId: string) => {
             const product = products.find((p) => p.id === productId);
             return {
               product: { connect: { id: productId } },
@@ -78,21 +67,9 @@ export async function POST(
       },
     });
 
-    const session = await stripe.checkout.sessions.create({
-      line_items,
-      mode: "payment",
-      billing_address_collection: "required",
-      phone_number_collection: { enabled: true },
-      success_url: `${process.env.FRONTEND_STORE_URL}/cart?success=1`,
-      cancel_url: `${process.env.FRONTEND_STORE_URL}/cart?canceled=1`,
-      metadata: {
-        orderId: order.id,
-      },
-    });
-
-    return NextResponse.json({ url: session.url }, { headers: corsHeaders });
+    return NextResponse.json({ success: true, orderId: order.id }, { headers: corsHeaders });
   } catch (error) {
-    console.error("Error in POST--Stripe Checkout Session", error);
+    console.error("Error in cash checkout", error);
     return new NextResponse("Internal server error", {
       status: 500,
       headers: corsHeaders,

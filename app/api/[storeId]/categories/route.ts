@@ -2,80 +2,61 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import prismadb from "@/lib/prismadb";
 
+// POST: Create a category
 export async function POST(
-    req: Request,
-    { params }: {params: { storeId: string}}
+  req: Request,
+  context: { params: Promise<{ storeId: string }> }
 ) {
-    try{
-        const { userId } = await auth();
-        const body = await req.json();
+  try {
+    const { storeId } = await context.params; // Await params to access storeId
+    const { userId } = await auth();
+    const body = await req.json();
+    const { name, billboardId } = body;
 
-        const { name ,billboardId } = body;
-
-        if(!userId) {
-            return new NextResponse("Unauthenticatd",{status: 401});
-        }
-
-        if(!name) {
-            return new NextResponse("Name is Required", { status: 400 });
-        }
-
-        if(!billboardId) {
-            return new NextResponse("Billboard is Required", { status: 400 });
-        }
-
-        if(!params.storeId) {
-            return new NextResponse("Store Id is Required", { status: 400 });
-        }
-
-        const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: params.storeId,
-                userId
-            }
-        });
-
-        if(!storeByUserId) {
-            return new NextResponse("Unauthorize" , {status: 403});
-        }
-
-        const category = await prismadb.category.create({
-            data: {
-                name,
-                billboardId,
-                storeId: params.storeId
-            }
-        });
-
-        return NextResponse.json(category);
-    } catch(error){
-        console.error("Error In POST--Category",error);
-        return new NextResponse("Internal server error", {status:500});
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 401 });
     }
-};
+    if (!name) {
+      return new NextResponse("Name is required", { status: 400 });
+    }
+    if (!billboardId) {
+      return new NextResponse("Billboard ID is required", { status: 400 });
+    }
 
+    const store = await prismadb.store.findFirst({
+      where: { id: storeId, userId },
+    });
 
+    if (!store) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+
+    const category = await prismadb.category.create({
+      data: { name, billboardId, storeId },
+    });
+
+    return NextResponse.json(category);
+  } catch (error) {
+    console.error("[CATEGORY_POST]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
+// GET: Fetch categories
 export async function GET(
-    req: Request,
-    { params }: {params: { storeId: string}}
+  _req: Request,
+  context: { params: Promise<{ storeId: string }> }
 ) {
-    try{
-       
-        if(!params.storeId) {
-            return new NextResponse("Store Id is Required", { status: 400 });
-        }
+  try {
+    const { storeId } = await context.params; // Await params to access storeId
 
-        
+    const categories = await prismadb.category.findMany({
+      where: { storeId },
+    });
 
-        const categories = await prismadb.category.findMany({
-            where: {
-                storeId: params.storeId,
-            }
-        });
-
-        return NextResponse.json(categories);
-    } catch(error){
-        console.error("Error In GET--Category",error);
-        return new NextResponse("Internal server error", {status:500});
-    }
-};
+    return NextResponse.json(categories);
+  } catch (error) {
+    console.error("[CATEGORY_GET]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}

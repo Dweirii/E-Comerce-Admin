@@ -2,130 +2,104 @@ import prismadb from "@/lib/prismadb";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-
-export async function GET (
-    req: Request,
-    { params }: { params: {storeId: string, billboardId: string }}
+// GET: Retrieve a specific billboard
+export async function GET(
+  req: Request,
+  context: { params: Promise<{ storeId: string; billboardId: string }> }
 ) {
+  try {
+    const { storeId, billboardId } = await context.params;
 
-    try{
-
-        if(!params.billboardId) {
-            return new NextResponse("Billboard id is required", {status: 400});
-        }
-
-        const billboard = await prismadb.billboard.findUnique({
-            where: {
-                id: await params.billboardId,
-            }
-        });
-
-        return NextResponse.json(billboard);
-        
-    } catch (error) {
-        console.log("[Billboard_GET]",error);
-        return new NextResponse("Internal Server Error", {status: 500});
+    if (!billboardId) {
+      return new NextResponse("Billboard ID is required", { status: 400 });
     }
 
-};
+    const billboard = await prismadb.billboard.findUnique({
+      where: { id: billboardId },
+    });
 
-export async function PATCH (
-    req: Request,
-    { params }: { params: {storeId:string, billboardId: string }}
+    return NextResponse.json(billboard);
+  } catch (error) {
+    console.error("[Billboard_GET]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
+// PATCH: Update a specific billboard
+export async function PATCH(
+  req: Request,
+  context: { params: Promise<{ storeId: string; billboardId: string }> }
 ) {
+  try {
+    const { storeId, billboardId } = await context.params;
+    const { userId } = await auth();
+    const body = await req.json();
+    const { label, imageUrl } = body;
 
-    try{
-        const { userId } = await auth();
-        const body = await req.json();
-
-        const { label, imageUrl } = body;
-
-        if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
-        }
-
-        if (!label) {
-            return new NextResponse("Label is required", {status: 400});
-        }
-
-        if (!imageUrl) {
-            return new NextResponse("Image URL is required", {status: 400});
-        }
-
-
-        if(!params.billboardId) {
-            return new NextResponse("Billboard id is required", {status: 400});
-        }
-
-        const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: await params.storeId,
-                userId
-            }
-        });
-
-        if(!storeByUserId) {
-            return new NextResponse("Unauthorize" , {status: 403});
-        }
-
-        const billboard = await prismadb.billboard.updateMany({
-            where: {
-                id: await params.billboardId,
-            },
-            data: {
-                label,
-                imageUrl
-            }
-        });
-
-        return NextResponse.json(billboard);
-
-    } catch (error) {
-        console.log("[billboard_patch]",error);
-        return new NextResponse("Internal Server Error", {status: 500});
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 401 });
+    }
+    if (!label) {
+      return new NextResponse("Label is required", { status: 400 });
+    }
+    if (!imageUrl) {
+      return new NextResponse("Image URL is required", { status: 400 });
+    }
+    if (!billboardId) {
+      return new NextResponse("Billboard ID is required", { status: 400 });
     }
 
-};
+    const storeByUserId = await prismadb.store.findFirst({
+      where: { id: storeId, userId },
+    });
 
-export async function DELETE (
-    req: Request,
-    { params }: { params: {storeId: string, billboardId: string }}
-) {
-
-    try{
-        const { userId } = await auth();
-
-        if(!userId) {
-            return new NextResponse("Unauthenticated", { status: 401 });
-        }
-
-        const storeByUserId = await prismadb.store.findFirst({
-            where: {
-                id: params.storeId,
-                userId
-            }
-        });
-
-        if(!storeByUserId) {
-            return new NextResponse("Unauthorize" , {status: 403});
-        }
-
-        if(!params.billboardId) {
-            return new NextResponse("Billboard id is required", {status: 400});
-        }
-
-        const billboard = await prismadb.billboard.deleteMany({
-            where: {
-                id: await params.billboardId,
-
-            }
-        });
-
-        return NextResponse.json(billboard);
-        
-    } catch (error) {
-        console.log("[Billboard_DELETE]",error);
-        return new NextResponse("Internal Server Error", {status: 500});
+    if (!storeByUserId) {
+      return new NextResponse("Unauthorized", { status: 403 });
     }
 
-};
+    const billboard = await prismadb.billboard.update({
+      where: { id: billboardId },
+      data: { label, imageUrl },
+    });
+
+    return NextResponse.json(billboard);
+  } catch (error) {
+    console.error("[Billboard_PATCH]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
+// DELETE: Remove a specific billboard
+export async function DELETE(
+  req: Request,
+  context: { params: Promise<{ storeId: string; billboardId: string }> }
+) {
+  try {
+    const { storeId, billboardId } = await context.params;
+    const { userId } = await auth();
+
+    if (!userId) {
+      return new NextResponse("Unauthenticated", { status: 401 });
+    }
+    if (!billboardId) {
+      return new NextResponse("Billboard ID is required", { status: 400 });
+    }
+
+    const storeByUserId = await prismadb.store.findFirst({
+      where: { id: storeId, userId },
+    });
+
+    if (!storeByUserId) {
+      return new NextResponse("Unauthorized", { status: 403 });
+    }
+
+    const billboard = await prismadb.billboard.delete({
+      where: { id: billboardId },
+    });
+
+    return NextResponse.json(billboard);
+  } catch (error) {
+    console.error("[Billboard_DELETE]", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}

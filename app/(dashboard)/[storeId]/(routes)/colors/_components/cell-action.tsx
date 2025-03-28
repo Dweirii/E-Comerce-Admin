@@ -1,7 +1,7 @@
 "use client";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { SizeColumn } from "./columns";
+import { ColorColumn } from "./columns";
 import { Button } from "@/components/ui/button";
 import { Copy, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -11,7 +11,7 @@ import { useState } from "react";
 import { AleartModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps {
-    data: SizeColumn;
+    data: ColorColumn;
 };
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -32,10 +32,10 @@ export const CellAction: React.FC<CellActionProps> = ({
     const onDelete = async () => {
         try {
           setLoading(true)
-          await axios.delete(`/api/${params.storeId}/sizes/${params.sizesId}`)
+          await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
           router.refresh();
           toast.success("sizes deleted.")
-        } catch (error) {
+        } catch {
           toast.error("Make sure you removed all products using this sizes first.")
         } finally {
           setLoading(false)

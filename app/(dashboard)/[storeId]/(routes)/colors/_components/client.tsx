@@ -7,8 +7,6 @@ import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { columns, ColorColumn } from "./columns";
 import { DataTable } from "@/components/data-table";
-import { ApiList } from "@/components/ui/api-list";
-
 interface ColorClientProps {
     data: ColorColumn[]
 }

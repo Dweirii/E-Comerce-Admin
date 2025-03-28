@@ -7,7 +7,6 @@ import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { columns, SizeColumn } from "./columns";
 import { DataTable } from "@/components/data-table";
-import { ApiList } from "@/components/ui/api-list";
 
 interface SizeClientProps {
     data: SizeColumn[]
