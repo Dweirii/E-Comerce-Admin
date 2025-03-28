@@ -16,7 +16,7 @@ export const OrderClient: React.FC<OrderClientProps> = ({
 
     return (
         <>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pb-5">
                 <Heading
                     title={`Orders (${data.length})`}
                     description="Manage Orders for your store"

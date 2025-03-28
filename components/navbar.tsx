@@ -29,7 +29,7 @@ const Navbar = async () => {
       <SidebarNav
         storeSwitcher={<StoreSwitcher items={stores} />}
         userButton={
-          <div className="flex justify-center">
+          <div className="flex justify-center pr-2">
             <UserButton afterSignOutUrl="/" />
           </div>
         }
