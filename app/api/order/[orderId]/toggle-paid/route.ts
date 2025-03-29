@@ -3,11 +3,12 @@ import prismadb from "@/lib/prismadb";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { orderId: string } }
+  context: { params: Promise<{ orderId: string }> }
 ) {
   try {
+    const { orderId } = await context.params;
     const order = await prismadb.order.findUnique({
-      where: { id: params.orderId },
+      where: { id: orderId },
     });
 
     if (!order) {
@@ -15,7 +16,7 @@ export async function PATCH(
     }
 
     const updated = await prismadb.order.update({
-      where: { id: params.orderId },
+      where: { id: orderId },
       data: { isPaid: !order.isPaid },
     });
 

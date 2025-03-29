@@ -21,6 +21,7 @@ import { UploadButton } from "@/utils/uploadthing"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
 interface BillboardsFormProps {
   initialData: Billboard | null
@@ -281,9 +282,11 @@ export const BillboardsForm: React.FC<BillboardsFormProps> = ({ initialData }) =
                               Change Image
                             </Button>
                           </div>
-                          <img
+                          <Image
                             src={imageUrl || "/placeholder.svg"}
                             alt="Billboard image"
+                            width={600} // Set the width you want
+                            height={400} // Set the height you want
                             className="h-[180px] sm:h-[220px] w-full object-cover transition-transform group-hover:scale-105"
                           />
                         </div>

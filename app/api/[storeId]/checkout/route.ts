@@ -16,10 +16,10 @@ export async function OPTIONS() {
 
 export async function POST(
   req: Request,
-  context: { params: { storeId: string } }
+  context: { params: Promise<{ storeId: string }> }
 ) {
   try {
-    const { storeId } = context.params;
+    const { storeId } = await context.params;
 
     if (!storeId) {
       return new NextResponse("Store ID is required.", {

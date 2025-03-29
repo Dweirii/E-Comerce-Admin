@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 // GET: Retrieve a specific size
 export async function GET(
   req: Request,
-  context: { params: { storeId: string; sizeId: string } }
+  context: { params: Promise<{ storeId: string; sizeId: string }> }
 ) {
   try {
     const { storeId, sizeId } = await context.params;
@@ -32,7 +32,7 @@ export async function GET(
 // PATCH: Update a specific size
 export async function PATCH(
   req: Request,
-  context: { params: { storeId: string; sizeId: string } }
+  context: { params: Promise<{ storeId: string; sizeId: string }> }
 ) {
   try {
     const { userId } = await auth();
@@ -71,7 +71,7 @@ export async function PATCH(
 // DELETE: Remove a specific size
 export async function DELETE(
   req: Request,
-  context: { params: { storeId: string; sizeId: string } }
+  context: { params: Promise<{ storeId: string; sizeId: string }> }
 ) {
   try {
     const { userId } = await auth();

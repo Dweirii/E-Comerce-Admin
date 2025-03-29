@@ -3,7 +3,7 @@ import StoreSwitcher from "@/components/store-switcher"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import prismadb from "@/lib/prismadb"
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
+import { SidebarProvider} from "@/components/ui/sidebar"
 import { SidebarNav } from "@/components/sidebar-nav"
 import { cookies } from "next/headers"
 

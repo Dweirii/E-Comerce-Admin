@@ -1,13 +1,11 @@
 "use client";
 
-import { useSidebar } from "@/components/ui/sidebar";
 
 export default function ContentWithSidebarPadding({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { state } = useSidebar();
 
   return (
     <main

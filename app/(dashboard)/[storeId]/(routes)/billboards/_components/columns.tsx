@@ -6,6 +6,7 @@ import { CellAction } from "./cell-action"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 
 // Enhanced type definition with additional fields
 export type BillboardColumn = {
@@ -39,7 +40,7 @@ const MobileDetailView = ({ data }: { data: BillboardColumn }) => {
         <div className="space-y-4">
           {data.imageUrl && (
             <div className="aspect-video w-full overflow-hidden rounded-md">
-              <img src={data.imageUrl || "/placeholder.svg"} alt={data.label} className="h-full w-full object-cover" />
+              <Image src={data.imageUrl || "/placeholder.svg"} alt={data.label} className="h-full w-full object-cover" />
             </div>
           )}
 

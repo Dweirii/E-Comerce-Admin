@@ -14,10 +14,10 @@ export async function OPTIONS() {
 
 export async function POST(
   req: Request,
-  context: { params: { storeId: string } }
+  context: { params: Promise<{ storeId: string }> }
 ) {
   try {
-    const { storeId } = context.params;
+    const { storeId } = await context.params;
 
     if (!storeId) {
       return new NextResponse("Store ID is required.", {
@@ -43,12 +43,12 @@ export async function POST(
       },
     });
 
-    // احسب السعر الكلي
+    // Calculate the total price
     const totalPrice = products.reduce((sum, product) => {
       return sum + product.price.toNumber();
     }, 0);
 
-    // أنشئ الطلب
+    // Create the order
     const order = await prismadb.order.create({
       data: {
         storeId: storeId,

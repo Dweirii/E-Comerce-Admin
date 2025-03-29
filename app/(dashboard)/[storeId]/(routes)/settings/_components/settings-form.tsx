@@ -4,12 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { Store } from "@prisma/client";
-import * as z from "zod"
+import * as z from "zod";
 import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -18,113 +25,159 @@ import { AleartModal } from "@/components/modals/alert-modal";
 import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
 
-
 interface SettingsFormProps {
-    initialData: Store;
+  initialData: Store & {
+    title?: string;
+    description?: string;
+  };
 }
 
-const formSchema =z.object({
-    name: z.string().min(1),
+const formSchema = z.object({
+  name: z.string().min(1),
+  title: z.string().min(1),
+  description: z.string().min(1),
 });
 
 type SettingsFormValues = z.infer<typeof formSchema>;
 
-export const SettingsForm: React.FC<SettingsFormProps> = (
-    initialData
-) => {
-
-    const [open, setOpen] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const params = useParams();
-    const router = useRouter();
-    const origin = useOrigin();
+export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const router = useRouter();
+  const origin = useOrigin();
 
   const form = useForm<SettingsFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {name: initialData.initialData.name}
+    defaultValues: {
+      name: initialData.name,
+      title: initialData.title || "",
+      description: initialData.description || "",
+    },
   });
 
-  const onSubmit = async (data: SettingsFormValues) =>{
-    try{
-        setLoading(true)
-        await axios.patch(`/api/stores/${params.storeId}`, data);
-        router.refresh();
-        toast.success("Store Updated")
+  const onSubmit = async (data: SettingsFormValues) => {
+    try {
+      setLoading(true);
+
+      await axios.patch(`/api/stores/${params.storeId}`, {
+        name: data.name,
+      });
+
+      await axios.post(`/api/metadata/${params.storeId}`, {
+        title: data.title,
+        description: data.description,
+      });
+
+      router.refresh();
+      toast.success("Store settings updated");
     } catch {
-        toast.error("Something went wrong")
+      toast.error("Something went wrong");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const onDelete = async () => {
     try {
-        setLoading(true)
-        await axios.delete(`/api/stores/${params.storeId}`)
-        router.refresh();
-        router.push("/")
-        toast.success("Store deleted.");
+      setLoading(true);
+      await axios.delete(`/api/stores/${params.storeId}`);
+      router.refresh();
+      router.push("/");
+      toast.success("Store deleted.");
     } catch {
-        toast.error("Make Sure you removed all products and categoties first.");
+      toast.error("Make sure you removed all products and categories first.");
     } finally {
-        setLoading(false);
-        setOpen(false);
+      setLoading(false);
+      setOpen(false);
     }
-  }
+  };
+
   return (
     <>
-
-    <AleartModal
+      <AleartModal
         isOpen={open}
-        onClose={()=>setOpen(false)}
-        onConfirm={onDelete }
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
         loading={loading}
-    />
+      />
 
-    <div className="flex items-center justify-between">
-        <Heading
-            title="Settings"
-            description="Manage store preferences"
-        />
+      <div className="flex items-center justify-between">
+        <Heading title="Settings" description="Manage store preferences" />
         <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
+          disabled={loading}
+          variant="destructive"
+          size="sm"
+          onClick={() => setOpen(true)}
         >
-            <Trash className="h-4 w-4"/>
+          <Trash className="h-4 w-4" />
         </Button>
-    </div>
+      </div>
 
-    <Separator />
+      <Separator />
 
-    <Form {...form}>
+      <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-            <div className="grid grid-cols-3 gap-8">
-                <FormField 
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Name</FormLabel>
-                            <FormControl>
-                                <Input disabled={loading} placeholder="Store name" {...field}/>
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-            </div>
-            <Button disabled={loading} className="ml-auto" type="submit">
-                Save changes
-            </Button>
+          <div className="grid grid-cols-3 gap-8">
+            {/* Store Name */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store Name</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="Store name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Page Title */}
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Page Title</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="Title shown on browser tab & Google" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Meta Description */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Meta Description</FormLabel>
+                  <FormControl>
+                    <Input disabled={loading} placeholder="Short store description for SEO" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <Button disabled={loading} className="ml-auto" type="submit">
+            Save changes
+          </Button>
         </form>
-    </Form>
-    <Separator/>
-    <ApiAlert 
+      </Form>
+
+      <Separator />
+
+      <ApiAlert
         title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/${params.storeId}`} 
-        variant="Public"/>
+        description={`${origin}/api/${params.storeId}`}
+        variant="Public"
+      />
     </>
   );
-}
+};

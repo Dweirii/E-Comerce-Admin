@@ -23,6 +23,8 @@ model Store {
   Order Order[] @relation("StoreToOrder")
   Product Product[] @relation("StoreToProducts")
 
+
+  PageMetadata PageMetadata[]
 }
 
 model Billboard {
@@ -158,5 +160,16 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+model PageMetadata {
+  id          String @id @default(uuid())
+  storeId     String
+  title       String
+  description String
+
+  updateAt    DateTime @updatedAt
+  
+  store       Store    @relation(fields: [storeId], references: [id])
 }
 

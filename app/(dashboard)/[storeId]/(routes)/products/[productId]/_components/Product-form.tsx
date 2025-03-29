@@ -23,6 +23,7 @@ import { useMobile } from "@/hooks/use-mobile"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Image from "next/image"
 
 
 const formSchema = z.object({
@@ -198,10 +199,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                   {images.map((image, index) => (
                                     <div key={index} className="relative group">
                                       <div className="overflow-hidden rounded-md border w-[150px] h-[150px]">
-                                        <img
+                                        <Image
                                           src={image.url || "/placeholder.svg"}
                                           alt={`Product image ${index + 1}`}
                                           className="h-full w-full object-cover"
+                                          width={150}
+                                          height={150}
                                         />
                                       </div>
                                       <Button

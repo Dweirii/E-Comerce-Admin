@@ -8,7 +8,7 @@ export async function GET(
   context: { params: Promise<{ storeId: string; billboardId: string }> }
 ) {
   try {
-    const { storeId, billboardId } = await context.params;
+    const { billboardId } = await context.params;
 
     if (!billboardId) {
       return new NextResponse("Billboard ID is required", { status: 400 });

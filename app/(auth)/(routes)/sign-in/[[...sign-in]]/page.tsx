@@ -2,7 +2,6 @@
 
 import { SignIn } from "@clerk/nextjs";
 import { BarChart4, LineChart, PieChart, ShoppingBag } from 'lucide-react';
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function SignInPage() {
