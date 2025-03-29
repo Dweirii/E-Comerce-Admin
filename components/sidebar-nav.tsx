@@ -47,7 +47,11 @@ function CollapseButton() {
       className="h-9 w-9 rounded-full transition-all duration-200 hover:bg-muted"
       aria-label={open ? "Collapse sidebar" : "Expand sidebar"}
     >
-      {open ? <PanelLeftClose className="h-4 w-4" /> : <PanelLeftOpen className="h-4 w-4" />}
+      {open ? (
+        <PanelLeftClose className="h-4 w-4 transition-transform duration-200" />
+      ) : (
+        <PanelLeftOpen className="h-4 w-4 transition-transform duration-200" />
+      )}
     </Button>
   )
 }
@@ -63,49 +67,57 @@ export function SidebarNav({ className, storeSwitcher, userButton, ...props }: S
       href: `/${params.storeId}`,
       label: "Dashboard",
       icon: BarChart3,
-      color: "text-blue-600",
+      color: "text-blue-500 dark:text-blue-400",
+      bgColor: "bg-blue-500/10",
     },
     {
       href: `/${params.storeId}/billboards`,
       label: "Billboards",
       icon: ImageIcon,
-      color: "text-purple-600",
+      color: "text-purple-500 dark:text-purple-400",
+      bgColor: "bg-purple-500/10",
     },
     {
       href: `/${params.storeId}/categories`,
       label: "Categories",
       icon: LayoutGrid,
-      color: "text-amber-600",
+      color: "text-amber-500 dark:text-amber-400",
+      bgColor: "bg-amber-500/10",
     },
     {
       href: `/${params.storeId}/sizes`,
       label: "Sizes",
       icon: Ruler,
-      color: "text-green-600",
+      color: "text-green-500 dark:text-green-400",
+      bgColor: "bg-green-500/10",
     },
     {
       href: `/${params.storeId}/colors`,
       label: "Colors",
       icon: Palette,
-      color: "text-pink-600",
+      color: "text-pink-500 dark:text-pink-400",
+      bgColor: "bg-pink-500/10",
     },
     {
       href: `/${params.storeId}/products`,
       label: "Products",
       icon: Package,
-      color: "text-indigo-600",
+      color: "text-indigo-500 dark:text-indigo-400",
+      bgColor: "bg-indigo-500/10",
     },
     {
       href: `/${params.storeId}/orders`,
       label: "Orders",
       icon: ShoppingCart,
-      color: "text-orange-600",
+      color: "text-orange-500 dark:text-orange-400",
+      bgColor: "bg-orange-500/10",
     },
     {
       href: `/${params.storeId}/settings`,
       label: "Settings",
       icon: Settings,
-      color: "text-gray-600",
+      color: "text-gray-500 dark:text-gray-400",
+      bgColor: "bg-gray-500/10",
     },
   ]
 
@@ -133,19 +145,27 @@ export function SidebarNav({ className, storeSwitcher, userButton, ...props }: S
                   asChild
                   isActive={isActive}
                   tooltip={route.label}
-                  className={cn("transition-all duration-200", isActive ? "font-medium" : "font-normal")}
+                  className={cn(
+                    "transition-all duration-200 relative",
+                    isActive ? "font-medium" : "font-normal hover:bg-muted/50",
+                  )}
                 >
                   <Link href={route.href} className="flex items-center gap-3">
                     <div
                       className={cn(
-                        "flex items-center justify-center",
+                        "flex items-center justify-center relative",
                         isCollapsed ? "mx-auto" : "",
-                        isActive ? route.color : "text-muted-foreground",
+                        isActive ? cn(route.color, route.bgColor, "rounded-md p-1") : "text-muted-foreground p-1",
                       )}
                     >
-                      <route.icon className="h-5 w-5" />
+                      <route.icon className={cn("h-5 w-5 transition-all", isActive && "scale-110")} />
                     </div>
-                    <span className="truncate">{route.label}</span>
+                    <span className={cn("truncate transition-all", isActive ? route.color : "text-foreground")}>
+                      {route.label}
+                    </span>
+                    {isActive && !isCollapsed && (
+                      <span className="absolute inset-y-0 left-0 w-1 rounded-r-md bg-primary" />
+                    )}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

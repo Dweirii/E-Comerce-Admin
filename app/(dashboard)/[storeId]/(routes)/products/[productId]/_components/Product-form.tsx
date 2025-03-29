@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
 import * as z from "zod"
-import { Trash,  X, ArrowLeft, DollarSign, Tag } from "lucide-react"
+import { Trash, X, ArrowLeft, DollarSign, Tag, Moon, Sun } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
@@ -24,7 +24,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import Image from "next/image"
-
+import { useTheme } from "next-themes"
 
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -61,6 +61,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
   const router = useRouter()
   const isMobile = useMobile()
 
+  const { setTheme, theme } = useTheme()
 
   // UI text variables
   const title = initialData ? "Edit Product" : "Create Product"
@@ -157,18 +158,29 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
           </Button>
           <Heading title={title} description={description} />
         </div>
-        {initialData && (
+        <div className="flex items-center gap-2">
           <Button
-            disabled={loading}
-            variant="destructive"
-            size={isMobile ? "default" : "sm"}
-            onClick={() => setOpen(true)}
-            className="self-start sm:self-auto"
+            variant="outline"
+            size="icon"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="rounded-full"
           >
-            <Trash className="h-4 w-4 mr-2" />
-            Delete
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
           </Button>
-        )}
+          {initialData && (
+            <Button
+              disabled={loading}
+              variant="destructive"
+              size={isMobile ? "default" : "sm"}
+              onClick={() => setOpen(true)}
+            >
+              <Trash className="h-4 w-4 mr-2" />
+              Delete
+            </Button>
+          )}
+        </div>
       </div>
       <Separator className="my-4" />
       <Form {...form}>
@@ -179,9 +191,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
               <TabsTrigger value="details">Details</TabsTrigger>
             </TabsList>
             <TabsContent value="images" className="mt-6">
-              <Card>
+              <Card className="border border-border bg-card shadow-sm">
                 <CardContent className="pt-6">
-                <FormField
+                  <FormField
                     control={form.control}
                     name="image"
                     render={() => (
@@ -194,15 +206,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                           <div className="w-full space-y-4 mt-2">
                             {/* Image Gallery */}
                             {images.length > 0 && (
-                              <ScrollArea className="w-full whitespace-nowrap rounded-md border">
-                                <div className="flex gap-3 p-4">
+                              <ScrollArea className="w-full rounded-md border">
+                                <div className="flex flex-wrap gap-3 p-4">
                                   {images.map((image, index) => (
                                     <div key={index} className="relative group">
-                                      <div className="overflow-hidden rounded-md border w-[150px] h-[150px]">
+                                      <div className="overflow-hidden rounded-md border w-[120px] h-[120px] md:w-[150px] md:h-[150px] bg-background">
                                         <Image
                                           src={image.url || "/placeholder.svg"}
                                           alt={`Product image ${index + 1}`}
-                                          className="h-full w-full object-cover"
+                                          className="h-full w-full object-cover transition-all group-hover:scale-105"
                                           width={150}
                                           height={150}
                                         />
@@ -212,7 +224,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                         variant="destructive"
                                         size="icon"
                                         onClick={() => handleRemoveImage(index)}
-                                        className="absolute -top-2 -right-2 h-6 w-6 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute -top-2 -right-2 h-6 w-6 shadow-lg opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                                       >
                                         <X className="h-3 w-3" />
                                       </Button>
@@ -226,16 +238,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                             <UploadButton
                               endpoint="imageUploader"
                               onClientUploadComplete={(res) => {
-                                const fileUrl = res?.[0]?.url;
+                                const fileUrl = res?.[0]?.url
                                 if (fileUrl) {
-                                  handleAddImage(fileUrl);
-                                  toast.success("Upload completed");
+                                  handleAddImage(fileUrl)
+                                  toast.success("Upload completed")
                                 } else {
-                                  toast.error("Upload failed: No file URL returned");
+                                  toast.error("Upload failed: No file URL returned")
                                 }
                               }}
                               onUploadError={(error) => {
-                                toast.error(`Upload failed: ${error.message}`);
+                                toast.error(`Upload failed: ${error.message}`)
                               }}
                               className="ut-button:bg-primary ut-button:text-primary-foreground ut-button:hover:bg-primary/90 ut-button:rounded-md ut-button:font-medium ut-button:h-10 ut-button:px-4 ut-button:py-2"
                             />
@@ -254,7 +266,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
               </div>
             </TabsContent>
             <TabsContent value="details" className="mt-6 space-y-6">
-              <Card>
+              <Card className="border border-border bg-card shadow-sm">
                 <CardContent className="pt-6">
                   <div className="grid gap-6 md:grid-cols-2">
                     <div className="space-y-4">
@@ -272,7 +284,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                   disabled={loading}
                                   placeholder="Product Name"
                                   {...field}
-                                  className="h-12 text-base pl-10"
+                                  className="h-12 text-base pl-10 bg-background border-input"
                                 />
                               </div>
                             </FormControl>
@@ -295,7 +307,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                   disabled={loading}
                                   placeholder="9.99"
                                   {...field}
-                                  className="h-12 text-base pl-10"
+                                  className="h-12 text-base pl-10 bg-background border-input"
                                 />
                               </div>
                             </FormControl>
@@ -303,7 +315,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                           </FormItem>
                         )}
                       />
-                  </div>
+                    </div>
                     <div className="space-y-4">
                       <h3 className="text-lg font-medium">Product Attributes</h3>
                       <FormField
@@ -319,7 +331,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                               defaultValue={field.value}
                             >
                               <FormControl>
-                                <SelectTrigger className="h-12">
+                                <SelectTrigger className="h-12 bg-background border-input">
                                   <SelectValue defaultValue={field.value} placeholder="Select a category" />
                                 </SelectTrigger>
                               </FormControl>
@@ -349,7 +361,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                 defaultValue={field.value}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="h-12">
+                                  <SelectTrigger className="h-12 bg-background border-input">
                                     <SelectValue defaultValue={field.value} placeholder="Select a color" />
                                   </SelectTrigger>
                                 </FormControl>
@@ -384,7 +396,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                                 defaultValue={field.value}
                               >
                                 <FormControl>
-                                  <SelectTrigger className="h-12">
+                                  <SelectTrigger className="h-12 bg-background border-input">
                                     <SelectValue defaultValue={field.value} placeholder="Select a size" />
                                   </SelectTrigger>
                                 </FormControl>
@@ -405,7 +417,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                   </div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="border border-border bg-card shadow-sm">
                 <CardContent className="pt-6">
                   <h3 className="text-lg font-medium mb-4">Product Visibility</h3>
                   <div className="grid gap-6 md:grid-cols-2">
@@ -413,7 +425,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                       control={form.control}
                       name="isFeatured"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-card/50 hover:bg-card/80 transition-colors">
                           <FormControl>
                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                           </FormControl>
@@ -428,7 +440,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
                       control={form.control}
                       name="isArchived"
                       render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 bg-card/50 hover:bg-card/80 transition-colors">
                           <FormControl>
                             <Checkbox checked={field.value} onCheckedChange={field.onChange} className="mt-1" />
                           </FormControl>
@@ -453,7 +465,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, colors, s
             </TabsContent>
           </Tabs>
 
-          <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border p-4 md:hidden flex justify-between gap-x-2 z-10">
+          <div className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-border p-4 md:hidden flex justify-between gap-x-2 z-10">
             <Button
               type="button"
               variant="outline"
