@@ -4,8 +4,9 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ModalProvider } from "@/providers/modal-provider";
 import { ToasterProvider } from "@/providers/toast-provider";
+import { ThemeProvider } from "@/components/theme-provider";
 
-// تحميل الخطوط وتعيين المتغيرات
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -16,13 +17,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// معلومات الصفحة العامة
+
 export const metadata: Metadata = {
   title: "Dashboard",
   description: "An admin dashboard for E-Stores",
 };
 
-// Root Layout
+
 export default function RootLayout({
   children,
 }: {
@@ -34,9 +35,16 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} min-h-screen w-full antialiased bg-background text-foreground flex flex-col`}
         >
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
           <ModalProvider />
           <ToasterProvider />
           {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
