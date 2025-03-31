@@ -8,10 +8,7 @@ import { SidebarNav } from "@/components/sidebar-nav"
 import { cookies } from "next/headers"
 import type { Store } from "@prisma/client"
 
-/**
- * Navbar component that handles authentication, store fetching,
- * and renders the sidebar navigation with store switcher and user button.
- */
+
 const Navbar = async () => {
   // Check if user is authenticated
   const { userId } = await auth()
@@ -34,7 +31,6 @@ const Navbar = async () => {
     })
   } catch (error) {
     console.error("Failed to fetch stores:", error)
-    // Continue with empty stores array rather than crashing
   }
 
   // Get the sidebar state from cookies
@@ -46,7 +42,6 @@ const Navbar = async () => {
     defaultOpen = sidebarCookie ? sidebarCookie.value === "true" : true
   } catch (error) {
     console.error("Failed to read sidebar cookie:", error)
-    // Continue with default value
   }
 
   return (
