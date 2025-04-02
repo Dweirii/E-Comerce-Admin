@@ -162,10 +162,6 @@ const ProductsPage = async ({ params }: { params: Promise<{ storeId: string }> }
               <p className="text-muted-foreground max-w-sm mb-6">
                 You haven&apos;t added any products to your store yet. Add products to display them to your customers.
               </p>
-              <Button>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Add Product
-              </Button>
             </div>
           )}
         </div>

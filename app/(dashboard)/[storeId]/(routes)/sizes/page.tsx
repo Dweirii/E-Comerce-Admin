@@ -109,10 +109,6 @@ const SizePage = async ({ params }: { params: Promise<{ storeId: string }> }) =>
                 You haven&apos;t created any sizes yet. Sizes help categorize your products by their dimensions or
                 measurements.
               </p>
-              <Button>
-                <PlusCircle className="h-4 w-4 mr-2" />
-                Create Size
-              </Button>
             </div>
           )}
         </div>

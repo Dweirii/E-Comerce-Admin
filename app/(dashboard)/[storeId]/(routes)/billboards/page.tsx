@@ -28,10 +28,6 @@ const BillboardsPage = async ({ params }: { params: Promise<{ storeId: string }>
             <LayoutDashboardIcon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
             <span>Billboards</span>
           </h1>
-          <Button className="self-start md:self-auto" size="sm">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Add New
-          </Button>
         </div>
       </header>
 

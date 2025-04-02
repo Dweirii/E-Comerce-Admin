@@ -140,48 +140,6 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
                       </FormItem>
                     )}
                   />
-
-                  {/* Page Title */}
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Page Title</FormLabel>
-                        <FormControl>
-                          <Input
-                            disabled={loading}
-                            placeholder="Title shown on browser tab & Google"
-                            {...field}
-                            className="transition-all focus-visible:ring-primary"
-                          />
-                        </FormControl>
-                        <FormDescription>Appears in browser tabs and search results</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Meta Description */}
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Meta Description</FormLabel>
-                        <FormControl>
-                          <Input
-                            disabled={loading}
-                            placeholder="Short store description for SEO"
-                            {...field}
-                            className="transition-all focus-visible:ring-primary"
-                          />
-                        </FormControl>
-                        <FormDescription>Improves visibility in search engine results</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 <div className="flex justify-end">

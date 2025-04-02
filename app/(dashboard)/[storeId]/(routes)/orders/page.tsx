@@ -3,7 +3,7 @@ import prismadb from "@/lib/prismadb"
 import { format } from "date-fns"
 import type { OrderColumn } from "./_components/columns"
 import { formatter } from "@/lib/utils"
-import { CheckCircle2, ClipboardListIcon, FilterIcon, ShoppingCartIcon, XCircle } from "lucide-react"
+import { CheckCircle2, ClipboardListIcon, ShoppingCartIcon, XCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -65,10 +65,6 @@ const OrdersPage = async ({ params }: PageProps) => {
             <ShoppingCartIcon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
             <span>Orders</span>
           </h1>
-          <Button variant="outline" size="sm" className="self-start md:self-auto">
-            <FilterIcon className="h-4 w-4 mr-2" />
-            Filter
-          </Button>
         </div>
       </header>
 

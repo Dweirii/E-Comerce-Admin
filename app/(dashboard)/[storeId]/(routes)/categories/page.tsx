@@ -1,4 +1,4 @@
-import { CategoyClient } from "./_components/client" // Note: There's a typo in the component name
+import { CategoyClient } from "./_components/client" 
 import prismadb from "@/lib/prismadb"
 import { format } from "date-fns"
 import type { CategoryColumn } from "./_components/columns"
@@ -30,10 +30,6 @@ const CategoriesPage = async ({ params }: { params: Promise<{ storeId: string }>
             <LayoutGridIcon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
             <span>Categories</span>
           </h1>
-          <Button className="self-start md:self-auto" size="sm">
-            <PlusCircle className="h-4 w-4 mr-2" />
-            Add New
-          </Button>
         </div>
       </header>
 
