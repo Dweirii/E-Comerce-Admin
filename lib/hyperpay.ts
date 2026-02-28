@@ -108,7 +108,6 @@ export interface PaymentStatusResponse {
   amount?: string;
   currency?: string;
   merchantTransactionId?: string;
-  "merchantTransactionId"?: string;
   customParameters?: { merchantTransactionId?: string };
 }
 
